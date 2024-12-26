@@ -15,9 +15,9 @@ export default function ProductCard({product}){
           </div>
         </div>
         <p className=" card-text">${product.price}</p>
-        <a href="#" id="view_btn" className=" btn btn-block">
+        <Link to={"/product/"+product.id} href="#" id="view_btn" className=" btn btn-block">
           View Details
-        </a>
+        </Link>
       </div>
     </div>
   </div>
