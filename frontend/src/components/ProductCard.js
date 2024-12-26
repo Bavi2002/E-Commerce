@@ -15,7 +15,7 @@ export default function ProductCard({product}){
           </div>
         </div>
         <p className=" card-text">${product.price}</p>
-        <Link to={"/product/"+product.id} href="#" id="view_btn" className=" btn btn-block">
+        <Link to={`/product/${product._id}`} id="view_btn" className="btn btn-block">
           View Details
         </Link>
       </div>
