@@ -84,6 +84,7 @@ export default function ProductDetail({ cartItems, setCartItems }) {
             <button
               type="button"
               onClick={addtoCart}
+              disabled={product.stock == 0}
               id="cart_btn"
               className="btn btn-primary d-inline ml-4"
             >
