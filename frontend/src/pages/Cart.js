@@ -1,8 +1,9 @@
 import { Fragment, useState } from "react"
 import { Link } from "react-router-dom";
+import {toast} from 'react-toastify'
 
 export default function Cart({cartItems, setCartItems}){
-    const []= useState();
+    const [complete, setComplete]= useState(false);
 
     function increaseQty(item) {
         if(item.product.stock == item.qty){
@@ -28,9 +29,30 @@ export default function Cart({cartItems, setCartItems}){
           }
         }
         
+      function removeItem(item){
+        const updatedItems =  cartItems.filter((i)=>{
+            if(i.product._id !== item.product._id){
+                return true;
+            }
+           
+        })
+        setCartItems(updatedItems)
+      }
       
+function placeorderHandler(){
+    fetch(process.env.REACT_APP_API_URL + "/order",{
+        method:'POST',
+        headers:{'Content-Type':' application/json'},
+        body:JSON.stringify(cartItems)
+    }).then(()=>{
+        setCartItems([]);
+        setComplete(true);
+toast.success("Order Success");
+    })
+}
 
-    return <div class="container container-fluid">
+
+    return cartItems.length > 0 ? <Fragment> <div class="container container-fluid">
     <h2 class="mt-5">Your Cart: <b>{cartItems.length} items</b></h2>
     
     <div class="row d-flex justify-content-between">
@@ -63,7 +85,7 @@ export default function Cart({cartItems, setCartItems}){
                     </div>
 
                     <div class="col-4 col-lg-1 mt-4 mt-lg-0">
-                        <i id="delete_cart_item" class="fa fa-trash btn btn-danger"></i>
+                        <i id="delete_cart_item" onClick={()=>removeItem(item)} class="fa fa-trash btn btn-danger" ></i>
                     </div>
 
                 </div>
@@ -77,13 +99,13 @@ export default function Cart({cartItems, setCartItems}){
             <div id="order_summary">
                 <h4>Order Summary</h4>
                 <hr />
-                <p>Subtotal:  <span class="order-summary-values">1 (Units)</span></p>
-                <p>Est. total: <span class="order-summary-values">$245.67</span></p>
+                <p>Subtotal:  <span class="order-summary-values">{cartItems.reduce((acc,item)=>(acc+item.qty),0)} (Units)</span></p>
+                <p>Est. total: <span class="order-summary-values">${cartItems.reduce((acc,item)=>(acc+ item.product.price*item.qty),0).toFixed(2)}</span></p>
 
                 <hr />
-                <button id="checkout_btn" class="btn btn-primary btn-block">Place Order</button>
+                <button id="checkout_btn" class="btn btn-primary btn-block" onClick={placeorderHandler}>Place Order</button>
             </div>
         </div>
     </div>
-</div>
+</div></Fragment>: (!complete ? <h2 className="mt-5">Cart Is Empty</h2> : <Fragment><h2 className="mt-5">Order completed</h2><p>Order has been placed successfully</p></Fragment>)
 }
